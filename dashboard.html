@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Laptop Service Center</title>
+    <style>/* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        header {
+            background: #333;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        nav ul li {
+            display: inline;
+            margin-right: 15px;
+        }
+        
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .btn {
+            background: #77aaff;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #5599ff;
+        }
+        
+        /* Auth Forms */
+        .auth-section {
+            display: flex;
+            justify-content: center;
+            padding: 50px 0;
+        }
+        
+        .auth-box {
+            background: #f4f4f4;
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        
+        .auth-box input {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+           
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="location.html">Location</a></li>
+                    <li><button id="logout-btn" class="btn">Logout</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="dashboard-content">
+        <div class="container">
+            <h2>Welcome, <span id="user-name">User</span>!</h2>
+            <p>Your recent service requests and updates will appear here.</p>
+        </div>
+    </section>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

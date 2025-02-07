@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearby Laptop Service Centers</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+        }
+
+        #map {
+            width: 100%;
+            height: 500px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+    </style>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+
+    <header>Find Nearby Laptop Service Centers</header>
+
+    <p>Click the button to access your location and find the nearest laptop service centers.</p>
+    <button class="btn" onclick="getLocation()">Find Nearby Services</button>
+    <p id="status"></p>
+
+    <div id="map"></div>
+
+    <script>
+        let map;
+
+        function getLocation() {
+            const status = document.getElementById("status");
+            if (navigator.geolocation) {
+                status.innerHTML = "Getting your location...";
+                navigator.geolocation.getCurrentPosition(showMap, showError);
+            } else {
+                status.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function showMap(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            // Initialize Map
+            map = L.map("map").setView([lat, lon], 14);
+
+            // Load OpenStreetMap Layer
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // User's Location Marker
+            L.marker([lat, lon]).addTo(map)
+                .bindPopup("<b>Your Location</b>")
+                .openPopup();
+
+            document.getElementById("status").innerHTML = "Searching for laptop service centers...";
+
+            // Find nearby service centers
+            fetchNearbyLaptopServices(lat, lon);
+        }
+
+        function fetchNearbyLaptopServices(lat, lon) {
+            const nominatimURL = `https://nominatim.openstreetmap.org/search?format=json&q=laptop+service+center+near+me&limit=5&bounded=1&viewbox=${lon-0.1},${lat+0.1},${lon+0.1},${lat-0.1}`;
+
+            fetch(nominatimURL)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        data.forEach(place => {
+                            L.marker([place.lat, place.lon]).addTo(map)
+                                .bindPopup(`<b>${place.display_name}</b>`);
+                        });
+                        document.getElementById("status").innerHTML = "Showing nearby laptop service centers.";
+                    } else {
+                        document.getElementById("status").innerHTML = "No laptop service centers found nearby.";
+                    }
+                })
+                .catch(() => {
+                    document.getElementById("status").innerHTML = "Error fetching nearby locations.";
+                });
+        }
+        function showError(error) {
+    const status = document.getElementById("status");
+    switch (error.code) {
+        case error.PERMISSION_DENIED:
+            status.innerHTML = "User denied location access.";
+            break;
+        case error.POSITION_UNAVAILABLE:
+            status.innerHTML = "Location unavailable. Using default location.";
+            showMap({ coords: { latitude: 40.7128, longitude: -74.0060 } }); // New York
+            break;
+        case error.TIMEOUT:
+            status.innerHTML = "Location request timed out.";
+            break;
+        case error.UNKNOWN_ERROR:
+            status.innerHTML = "An unknown error occurred.";
+            break;
+    }
+}
+
+    </script>
+
+</body>
+</html>

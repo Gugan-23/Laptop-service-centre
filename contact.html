@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Laptop Service Center</title>
+    <style>/* Contact Section */
+        .contact {
+            padding: 50px 0;
+            background: #f4f4f4;
+            text-align: center;
+        }
+        
+        .contact h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        
+        .contact p {
+            color: #555;
+            max-width: 700px;
+            margin: auto;
+            margin-bottom: 20px;
+        }
+        
+        /* Contact Info */
+        .contact-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+        
+        .contact-item {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 30%;
+        }
+        
+        .contact-item h3 {
+            color: #333;
+        }
+        
+        /* Contact Form */
+        .contact form {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        .contact label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .contact input, 
+        .contact textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .contact .btn {
+            background: #77aaff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .contact .btn:hover {
+            background: #5599ff;
+        }
+        
+        /* Active Navigation Link */
+        nav ul li .active {
+            color: #77aaff;
+            text-decoration: underline;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        header {
+            background: #333;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        nav ul li {
+            display: inline;
+            margin-right: 15px;
+        }
+        
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .btn {
+            background: #77aaff;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #5599ff;
+        }
+        
+        /* Auth Forms */
+        .auth-section {
+            display: flex;
+            justify-content: center;
+            padding: 50px 0;
+        }
+        
+        .auth-box {
+            background: #f4f4f4;
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        
+        .auth-box input {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        </style>
+</head>
+<body>
+
+    <!-- Global Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html" class="active">Contact</a></li>
+                    <li><a href="location.html">Location</a></li>
+                    <li><button id="logout-btn" class="btn">Logout</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contact Section -->
+    <section class="contact">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <p>If you have any questions or need assistance, feel free to reach out to us.</p>
+
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3>📍 Our Address</h3>
+                    <p>123 Laptop Street, Tech City, TX 75001</p>
+                </div>
+                <div class="contact-item">
+                    <h3>📞 Phone</h3>
+                    <p>+1 (123) 456-7890</p>
+                </div>
+                <div class="contact-item">
+                    <h3>📧 Email</h3>
+                    <p>support@laptopservice.com</p>
+                </div>
+            </div>
+
+            <form action="#" method="post">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone" required>
+
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Laptop Service Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

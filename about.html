@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Laptop Service Center</title>
+    <style>/* About Section */
+      body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        header {
+            background: #333;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        nav ul li {
+            display: inline;
+            margin-right: 15px;
+        }
+        
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .btn {
+            background: #77aaff;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #5599ff;
+        }
+        
+        /* Auth Forms */
+        .auth-section {
+            display: flex;
+            justify-content: center;
+            padding: 50px 0;
+        }
+        
+        .auth-box {
+            background: #f4f4f4;
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        
+        .auth-box input {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .about {
+            padding: 50px 0;
+            background: #fff;
+            text-align: center;
+        }
+        
+        .about h2 {
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        
+        .about p {
+            max-width: 800px;
+            margin: auto;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        .about-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+        
+        .about-content img {
+            width: 40%;
+            border-radius: 10px;
+        }
+        
+        .about-text {
+            width: 50%;
+            text-align: left;
+        }
+        
+        .about-text h3 {
+            color: #333;
+            margin-top: 20px;
+        }
+        
+        .about-text ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .about-text ul li {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        /* Active Navigation Link */
+        nav ul li .active {
+            color: #77aaff;
+            text-decoration: underline;
+        }
+        </style>
+</head>
+<body>
+
+    <!-- Global Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="about.html" class="active">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="location.html">Location</a></li>
+                    <li><button id="logout-btn" class="btn">Logout</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section class="about">
+        <div class="container">
+            <h2>About Us</h2>
+            <p>Welcome to Laptop Service Center, your trusted partner in laptop repair and maintenance.</p>
+
+            <div class="about-content">
+                <img src="images/about-us.jpg" alt="Laptop Repair Team">
+                <div class="about-text">
+                    <h3>Who We Are</h3>
+                    <p>We are a team of certified technicians with years of experience in laptop repair, software troubleshooting, and hardware maintenance.</p>
+                    
+                    <h3>Our Mission</h3>
+                    <p>Our goal is to provide top-notch service and ensure customer satisfaction by delivering reliable and affordable solutions.</p>
+
+                    <h3>Why Choose Us?</h3>
+                    <ul>
+                        <li>✔ Certified Technicians</li>
+                        <li>✔ Quick and Reliable Service</li>
+                        <li>✔ Affordable Pricing</li>
+                        <li>✔ Genuine Spare Parts</li>
+                        <li>✔ Customer Satisfaction Guaranteed</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Laptop Service Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

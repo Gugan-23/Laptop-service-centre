@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Laptop Service Center</title>
+    <style>/* Services Section */
+        .services {
+            padding: 50px 0;
+            background: #f4f4f4;
+            text-align: center;
+        }
+        
+        .services h2 {
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        
+        .services p {
+            max-width: 800px;
+            margin: auto;
+            margin-bottom: 30px;
+        }
+        
+        .service-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .service-item {
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 30%;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        
+        .service-item h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .service-item p {
+            color: #666;
+        }
+        
+        /* Active Navigation Link */
+        nav ul li .active {
+            color: #77aaff;
+            text-decoration: underline;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        header {
+            background: #333;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        nav ul li {
+            display: inline;
+            margin-right: 15px;
+        }
+        
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .btn {
+            background: #77aaff;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: #5599ff;
+        }
+        
+        /* Auth Forms */
+        .auth-section {
+            display: flex;
+            justify-content: center;
+            padding: 50px 0;
+        }
+        
+        .auth-box {
+            background: #f4f4f4;
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        
+        .auth-box input {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        </style>
+</head>
+<body>
+
+    <!-- Global Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="services.html" class="active">Services</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="location.html">Location</a></li>
+                    <li><button id="logout-btn" class="btn">Logout</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Services Section -->
+    <section class="services">
+        <div class="container">
+            <h2>Our Services</h2>
+            <p>We offer a wide range of laptop repair and maintenance services.</p>
+
+            <div class="service-list">
+                <div class="service-item">
+                    <h3>Hardware Repair</h3>
+                    <p>Screen replacement, keyboard repair, motherboard issues, and more.</p>
+                </div>
+                <div class="service-item">
+                    <h3>Software Troubleshooting</h3>
+                    <p>Operating system installation, virus removal, and software optimization.</p>
+                </div>
+                <div class="service-item">
+                    <h3>Data Recovery</h3>
+                    <p>Recover lost or corrupted data from your laptop.</p>
+                </div>
+                <div class="service-item">
+                    <h3>Battery & Power Issues</h3>
+                    <p>Fix battery drain issues, charging problems, and power failures.</p>
+                </div>
+                <div class="service-item">
+                    <h3>Performance Upgrades</h3>
+                    <p>Increase RAM, upgrade to SSD, and improve overall performance.</p>
+                </div>
+                <div class="service-item">
+                    <h3>Networking & WiFi</h3>
+                    <p>Fix internet connection issues and configure networking settings.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Laptop Service Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login and Signup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 300px;
+    }
+
+    .container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .form-group button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .form-group button:hover {
+      background-color: #0056b3;
+    }
+
+    .toggle-link {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .toggle-link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .toggle-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="login-form">
+    <h2>Login</h2>
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="login-username">Username</label>
+        <input type="text" id="login-username" required>
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" required>
+      </div>
+      <div class="form-group">
+        <button type="submit">Login</button>
+      </div>
+    </form>
+    <div class="toggle-link">
+      Don't have an account? <a href="#" onclick="toggleForm()">Sign up</a>
+    </div>
+  </div>
+
+  <div class="container" id="signup-form" style="display: none;">
+    <h2>Signup</h2>
+    <form onsubmit="handleSignup(event)">
+      <div class="form-group">
+        <label for="signup-username">Username</label>
+        <input type="text" id="signup-username" required>
+      </div>
+      <div class="form-group">
+        <label for="signup-password">Password</label>
+        <input type="password" id="signup-password" required>
+      </div>
+      <div class="form-group">
+        <button type="submit">Sign up</button>
+      </div>
+    </form>
+    <div class="toggle-link">
+      Already have an account? <a href="#" onclick="toggleForm()">Login</a>
+    </div>
+  </div>
+
+  <script>
+    function toggleForm() {
+      const loginForm = document.getElementById("login-form");
+      const signupForm = document.getElementById("signup-form");
+      loginForm.style.display = loginForm.style.display === "none" ? "block" : "none";
+      signupForm.style.display = signupForm.style.display === "none" ? "block" : "none";
+    }
+
+    async function handleSignup(event) {
+      event.preventDefault();
+      const username = document.getElementById("signup-username").value;
+      const password = document.getElementById("signup-password").value;
+
+      const response = await fetch("http://localhost:5000/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+      alert(data.message);
+    }async function handleLogin(event) {
+  event.preventDefault();
+  const username = document.getElementById("login-username").value;
+  const password = document.getElementById("login-password").value;
+
+  const response = await fetch("http://localhost:5000/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
+
+  const data = await response.json();
+
+  if (response.ok) {
+    alert(data.message);
+    // Redirect to the home page
+    window.location.href = "home.html";
+  } else {
+    alert(data.message);
+  }
+}
+
+  </script>
+</body>
+</html>
