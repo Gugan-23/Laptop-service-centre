@@ -3,7 +3,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-
+const multer = require('multer');
+const path = require('path');
+const nodemailer = require('nodemailer');
 // MongoDB Connection URI
 const mongoURI = "mongodb+srv://vgugan16:gugan2004@cluster0.qyh1fuo.mongodb.net/user_db?retryWrites=true&w=majority&appName=Cluster0";
 const SECRET_KEY = "your_secret_key";
@@ -233,7 +235,48 @@ app.delete('/api/user/bookings/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ message: 'Failed to delete booking' });
   }
 });
+const upload = multer({ dest: 'uploads/' });  // Uploaded files will be stored in the "uploads" folder
 
+// Route to handle email sending with attachment
+app.post('/send-email', upload.single('photo'), (req, res) => {
+  const { name, subject, email,message } = req.body;
+
+  // Create the email transporter
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'h8702643@gmail.com',      // Your email
+      pass: 'osxarglpzcircimn',        // Your app password
+    },
+  });
+
+  // Email options with attachment
+  const mailOptions = {
+    from: 'h8702643@gmail.com',
+    to: 'v.gugan16@gmail.com',  // Always send to this email address
+    subject: subject,
+    text: `Name: ${name},Email:${email}\n\nMessage: ${message}`,
+    attachments: req.file
+      ? [
+          {
+            filename: req.file.originalname,
+            path: path.join(__dirname, req.file.path),
+          },
+        ]
+      : [],
+  };
+
+  // Send the email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+      res.status(500).send('Failed to send email.');
+    } else {
+      console.log('Email sent successfully:', info.response);
+      res.send('Email sent successfully.');
+    }
+  });
+});
 // Login Route
 app.post("/login", async (req, res) => {
     const { username, password } = req.body;
