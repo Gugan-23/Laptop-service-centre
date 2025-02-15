@@ -4,44 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Laptop Service Center</title>
-    <style>/* General Styles */
+    <style>
+        /* General Styles */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
             line-height: 1.6;
+            background: url('https://imgs.search.brave.com/fUm2PESYEvVDeu2eN4AvNbyTiFaspZYZP1gt9UQSWfE/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9jYXJ0b29uLWlt/YWdlLWxhcHRvcC13/aXRoLWV5ZXMtY2Fy/dG9vbi1mYWNlXzkz/MjA0NC0xNjI2Lmpw/Zz9zZW10PWFpc19o/eWJyaWQ') no-repeat center center/cover;
+            height: 100vh;
+            position: relative;
+            color: #fff;
         }
-        
+
+        /* Overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+            z-index: -1;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
         .container {
             width: 80%;
             margin: auto;
             overflow: hidden;
         }
-        
-        /* Header */
+
+        /* Header Animation */
         header {
-            background: #333;
+            background: rgba(51, 51, 51, 0.8);
             color: #fff;
             padding: 20px 0;
             text-align: center;
+            opacity: 0;
+            transform: translateY(-50px);
+            animation: fadeIn 1s forwards;
         }
-        
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Navigation */
         nav ul {
             list-style: none;
             padding: 0;
         }
-        
+
         nav ul li {
             display: inline;
             margin-right: 15px;
+            opacity: 0;
+            animation: slideIn 0.7s ease-out forwards;
         }
-        
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        nav ul li:nth-child(1) { animation-delay: 0.2s; }
+        nav ul li:nth-child(2) { animation-delay: 0.4s; }
+        nav ul li:nth-child(3) { animation-delay: 0.6s; }
+        nav ul li:nth-child(4) { animation-delay: 0.8s; }
+        nav ul li:nth-child(5) { animation-delay: 1s; }
+        nav ul li:nth-child(6) { animation-delay: 1.2s; }
+        nav ul li:nth-child(7) { animation-delay: 1.4s; }
+
         nav ul li a {
             color: #fff;
             text-decoration: none;
             font-weight: bold;
+            transition: color 0.3s ease-in-out;
         }
-        
+
+        nav ul li a:hover {
+            color: #77aaff;
+        }
+
         .btn {
             background: #77aaff;
             color: #fff;
@@ -49,39 +105,64 @@
             text-decoration: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background 0.3s ease-in-out, transform 0.2s ease;
         }
-        
+
         .btn:hover {
             background: #5599ff;
+            transform: scale(1.1);
         }
-        
-        /* Auth Forms */
-        .auth-section {
-            display: flex;
-            justify-content: center;
-            padding: 50px 0;
-        }
-        
-        .auth-box {
-            background: #f4f4f4;
-            padding: 20px;
-            width: 300px;
+
+        /* Dashboard Content Animation */
+        .dashboard-content {
             text-align: center;
-            border-radius: 10px;
+            padding: 50px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideUp 1s ease-in-out forwards 1.5s;
         }
-        
-        .auth-box input {
-            width: 90%;
-            padding: 10px;
-            margin-bottom: 10px;
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        </style>
+
+        /* Logout Button Animation */
+        #logout-btn {
+            border: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        #logout-btn:hover {
+            background: red;
+            transform: scale(1.1);
+        }
+
+        /* Animating User Name */
+        #user-name {
+            color: #00d9ff;
+            font-weight: bold;
+            display: inline-block;
+            transform: scale(0.5);
+            opacity: 0;
+            animation: popIn 0.7s ease-in-out forwards 2s;
+        }
+
+        @keyframes popIn {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+    </style>
 </head>
 <body>
 
     <header>
         <div class="container">
-           
             <nav>
                 <ul>
                     <li><a href="dashboard.html">Home</a></li>
@@ -89,6 +170,8 @@
                     <li><a href="about.html">About Us</a></li>
                     <li><a href="contact.html">Contact</a></li>
                     <li><a href="location.html">Location</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <li><a href="Request.html">Request</a></li>
                     <li><button id="logout-btn" class="btn">Logout</button></li>
                 </ul>
             </nav>
@@ -102,6 +185,17 @@
         </div>
     </section>
 
-    <script src="js/script.js"></script>
+    <script>
+        // Smooth logout animation
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            document.body.style.opacity = "0";
+            document.body.style.transition = "opacity 0.5s ease";
+            setTimeout(() => {
+                alert("Logging out...");
+                window.location.href = "login.html"; // Redirect to login page
+            }, 500);
+        });
+    </script>
+
 </body>
 </html>

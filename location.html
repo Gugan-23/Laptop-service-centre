@@ -1,141 +1,341 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nearby Laptop Service Centers</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <style>
+    /* General Body and Layout Styles (if any) */
+  </style>
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<style>
+  /* General Styles */
+  body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+      background: url('https://imgs.search.brave.com/fUm2PESYEvVDeu2eN4AvNbyTiFaspZYZP1gt9UQSWfE/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9jYXJ0b29uLWlt/YWdlLWxhcHRvcC13/aXRoLWV5ZXMtY2Fy/dG9vbi1mYWNlXzkz/MjA0NC0xNjI2Lmpw/Zz9zZW10PWFpc19o/eWJyaWQ') no-repeat center center/cover;
+      height: 100vh;
+      position: relative;
+      color: #fff;
+  }
 
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  /* Overlay */
+  body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+      z-index: -1;
+      opacity: 0;
+      animation: fadeIn 1s forwards;
+  }
 
-    <!-- Custom CSS -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
+  .container {
+      width: 80%;
+      margin: auto;
+      overflow: hidden;
+  }
 
-        header {
-            background: #333;
-            color: white;
-            padding: 15px;
-            font-size: 24px;
-        }
+  /* Header Animation */
+  header {
+      background: rgba(51, 51, 51, 0.8);
+      color: #fff;
+      padding: 20px 0;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(-50px);
+      animation: fadeIn 1s forwards;
+  }
 
-        #map {
-            width: 100%;
-            height: 500px;
-            margin-top: 20px;
-            border-radius: 10px;
-        }
+  @keyframes fadeIn {
+      to {
+          opacity: 1;
+          transform: translateY(0);
+      }
+  }
 
-        .btn {
-            background: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
-            border-radius: 5px;
-        }
+  /* Navigation */
+  nav ul {
+      list-style: none;
+      padding: 0;
+  }
 
-        .btn:hover {
-            background: #0056b3;
-        }
-    </style>
+  nav ul li {
+      display: inline;
+      margin-right: 15px;
+      opacity: 0;
+      animation: slideIn 0.7s ease-out forwards;
+  }
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  @keyframes slideIn {
+      from {
+          transform: translateY(-20px);
+          opacity: 0;
+      }
+      to {
+          transform: translateY(0);
+          opacity: 1;
+      }
+  }
+
+  nav ul li:nth-child(1) { animation-delay: 0.2s; }
+  nav ul li:nth-child(2) { animation-delay: 0.4s; }
+  nav ul li:nth-child(3) { animation-delay: 0.6s; }
+  nav ul li:nth-child(4) { animation-delay: 0.8s; }
+  nav ul li:nth-child(5) { animation-delay: 1s; }
+  nav ul li:nth-child(6) { animation-delay: 1.2s; }
+  nav ul li:nth-child(7) { animation-delay: 1.4s; }
+
+  nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease-in-out;
+  }
+
+  nav ul li a:hover {
+      color: #77aaff;
+  }
+
+  .btn {
+      background: #77aaff;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease-in-out, transform 0.2s ease;
+  }
+
+  .btn:hover {
+      background: #5599ff;
+      transform: scale(1.1);
+  }
+
+  /* Dashboard Content Animation */
+  .dashboard-content {
+      text-align: center;
+      padding: 50px 0;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 1s ease-in-out forwards 1.5s;
+  }
+
+  @keyframes slideUp {
+      to {
+          opacity: 1;
+          transform: translateY(0);
+      }
+  }
+
+  /* Logout Button Animation */
+  #logout-btn {
+      border: none;
+      transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  #logout-btn:hover {
+      background: red;
+      transform: scale(1.1);
+  }
+
+  /* Animating User Name */
+  #user-name {
+      color: #00d9ff;
+      font-weight: bold;
+      display: inline-block;
+      transform: scale(0.5);
+      opacity: 0;
+      animation: popIn 0.7s ease-in-out forwards 2s;
+  }
+
+  @keyframes popIn {
+      to {
+          transform: scale(1);
+          opacity: 1;
+      }
+  }
+
+</style>
 </head>
 <body>
 
-    <header>Find Nearby Laptop Service Centers</header>
+<header>
+  <div class="container">
+      <nav>
+          <ul>
+              <li><a href="dashboard.html">Home</a></li>
+              <li><a href="services.html">Services</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact</a></li>
+              <li><a href="location.html">Location</a></li>
+              <li><a href="profile.html">Profile</a></li>
+              <li><a href="Request.html">Request</a></li>
+              <li><button id="logout-btn" class="btn">Logout</button></li>
+          </ul>
+      </nav>
+  </div>
+</header>
+  <h1>Welcome to the Store Home Page</h1>
+  
+  <!-- Display the username here -->
+  <p id="user-username">Welcome, [Username will appear here]</p>
+  
+  <h2>Store Details</h2>
+  <div id="store-container"></div>
 
-    <p>Click the button to access your location and find the nearest laptop service centers.</p>
-    <button class="btn" onclick="getLocation()">Find Nearby Services</button>
-    <p id="status"></p>
+  <div id="selected-store-details" style="display: none;">
+    <h3 id="store-name"></h3>
+    <p id="store-contact"></p>
+    <p id="store-email"></p>
+    <p id="store-location"></p>
+    <button id="book-service-button">Book Service</button>
+  </div>
 
-    <div id="map"></div>
+  <div id="map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
 
-    <script>
-        let map;
+  <script>
+    let map = L.map('map');
+    let selectedStore = null;
 
-        function getLocation() {
-            const status = document.getElementById("status");
-            if (navigator.geolocation) {
-                status.innerHTML = "Getting your location...";
-                navigator.geolocation.getCurrentPosition(showMap, showError);
-            } else {
-                status.innerHTML = "Geolocation is not supported by this browser.";
-            }
+    async function fetchUserProfile() {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        alert("No token found. Redirecting to login...");
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5000/profile", {
+          method: "GET",
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // Display the username in the paragraph
+          document.getElementById("user-username").textContent = `Welcome, ${data.user.username}!`;
+          fetchStoreDetails(); // Fetch stores after successful login
+        } else {
+          alert("Session expired or invalid. Redirecting to login...");
+          window.location.href = "login.html";
         }
-
-        function showMap(position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-
-            // Initialize Map
-            map = L.map("map").setView([lat, lon], 14);
-
-            // Load OpenStreetMap Layer
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            // User's Location Marker
-            L.marker([lat, lon]).addTo(map)
-                .bindPopup("<b>Your Location</b>")
-                .openPopup();
-
-            document.getElementById("status").innerHTML = "Searching for laptop service centers...";
-
-            // Find nearby service centers
-            fetchNearbyLaptopServices(lat, lon);
-        }
-
-        function fetchNearbyLaptopServices(lat, lon) {
-            const nominatimURL = `https://nominatim.openstreetmap.org/search?format=json&q=laptop+service+center+near+me&limit=5&bounded=1&viewbox=${lon-0.1},${lat+0.1},${lon+0.1},${lat-0.1}`;
-
-            fetch(nominatimURL)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        data.forEach(place => {
-                            L.marker([place.lat, place.lon]).addTo(map)
-                                .bindPopup(`<b>${place.display_name}</b>`);
-                        });
-                        document.getElementById("status").innerHTML = "Showing nearby laptop service centers.";
-                    } else {
-                        document.getElementById("status").innerHTML = "No laptop service centers found nearby.";
-                    }
-                })
-                .catch(() => {
-                    document.getElementById("status").innerHTML = "Error fetching nearby locations.";
-                });
-        }
-        function showError(error) {
-    const status = document.getElementById("status");
-    switch (error.code) {
-        case error.PERMISSION_DENIED:
-            status.innerHTML = "User denied location access.";
-            break;
-        case error.POSITION_UNAVAILABLE:
-            status.innerHTML = "Location unavailable. Using default location.";
-            showMap({ coords: { latitude: 40.7128, longitude: -74.0060 } }); // New York
-            break;
-        case error.TIMEOUT:
-            status.innerHTML = "Location request timed out.";
-            break;
-        case error.UNKNOWN_ERROR:
-            status.innerHTML = "An unknown error occurred.";
-            break;
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        alert("An error occurred. Redirecting to login...");
+        window.location.href = "login.html";
+      }
     }
-}
 
-    </script>
+    async function fetchStoreDetails() {
+      try {
+        const response = await fetch("http://localhost:5000/api/stores");
+        if (!response.ok) throw new Error("Failed to fetch store details.");
+        
+        const stores = await response.json();
+        const storeContainer = document.getElementById("store-container");
 
+        stores.forEach((store) => {
+          const storeDiv = document.createElement("div");
+          storeDiv.style.border = "1px solid #ccc";
+          storeDiv.style.padding = "10px";
+          storeDiv.style.marginBottom = "10px";
+          storeDiv.style.borderRadius = "5px";
+
+          // Add marker for each store
+          const marker = L.marker([store.location.latitude, store.location.longitude])
+            .addTo(map)
+            .bindPopup(store.storeName);
+
+          marker.on('click', () => {
+            selectedStore = store;
+            document.getElementById("store-name").textContent = `Store Name: ${store.storeName}`;
+            document.getElementById("store-contact").textContent = `Contact: ${store.contactNumber}`;
+            document.getElementById("store-email").textContent = `Email: ${store.email}`;
+            document.getElementById("store-location").textContent = `Location: Latitude ${store.location.latitude}, Longitude ${store.location.longitude}`;
+            document.getElementById("selected-store-details").style.display = "block";
+          });
+        });
+      } catch (error) {
+        console.error("Error fetching store details:", error);
+        document.getElementById("store-container").innerText = "Failed to load store details.";
+      }
+    }
+
+    document.getElementById("book-service-button").addEventListener("click", async () => {
+    if (selectedStore) {
+      const username = document.getElementById("user-username").textContent.replace("Welcome, ", "").replace("!", "");
+      console.log("Attempting booking with details:", { username, storeEmail: selectedStore.email });
+
+      const bookingDetails = {
+        username: username,
+        storeEmail: selectedStore.email
+      };
+
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          alert("Authentication token missing. Please log in again.");
+          window.location.href = "login.html";
+          return;
+        }
+
+        const response = await fetch("http://localhost:5000/bookings", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(bookingDetails)
+        });
+
+        if (response.ok) {
+          alert(`Booking confirmed for ${selectedStore.storeName}`);
+        } else {
+          const errorData = await response.json();
+          console.error("Booking failed:", errorData);
+          alert(`Failed to book service: ${errorData.message}`);
+        }
+      } catch (error) {
+        console.error("Error occurred while booking service:", error);
+        alert("An error occurred while booking the service. Please try again.");
+      }
+    } else {
+      alert("No store selected. Please select a store first.");
+    }
+  });
+
+
+    function initMap() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          map.setView([lat, lon], 13);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(map);
+
+          L.marker([lat, lon]).addTo(map).bindPopup('Your Location').openPopup();
+        });
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    // Initialize the map and fetch user profile
+    initMap();
+    fetchUserProfile();
+  </script>
 </body>
 </html>

@@ -78,7 +78,7 @@
     <h2>Login</h2>
     <form onsubmit="handleLogin(event)">
       <div class="form-group">
-        <label for="login-username">Username</label>
+        <label for="login-username">Email</label>
         <input type="text" id="login-username" required>
       </div>
       <div class="form-group">
@@ -98,7 +98,7 @@
     <h2>Signup</h2>
     <form onsubmit="handleSignup(event)">
       <div class="form-group">
-        <label for="signup-username">Username</label>
+        <label for="signup-username">Email</label>
         <input type="text" id="signup-username" required>
       </div>
       <div class="form-group">
@@ -115,48 +115,66 @@
   </div>
 
   <script>
-    function toggleForm() {
-      const loginForm = document.getElementById("login-form");
-      const signupForm = document.getElementById("signup-form");
-      loginForm.style.display = loginForm.style.display === "none" ? "block" : "none";
-      signupForm.style.display = signupForm.style.display === "none" ? "block" : "none";
-    }
-
-    async function handleSignup(event) {
-      event.preventDefault();
-      const username = document.getElementById("signup-username").value;
-      const password = document.getElementById("signup-password").value;
-
-      const response = await fetch("http://localhost:5000/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-      alert(data.message);
-    }async function handleLogin(event) {
-  event.preventDefault();
-  const username = document.getElementById("login-username").value;
-  const password = document.getElementById("login-password").value;
-
-  const response = await fetch("http://localhost:5000/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
-  });
-
-  const data = await response.json();
-
-  if (response.ok) {
-    alert(data.message);
-    // Redirect to the home page
-    window.location.href = "home.html";
-  } else {
-    alert(data.message);
+    
+  function toggleForm() {
+    const loginForm = document.getElementById("login-form");
+    const signupForm = document.getElementById("signup-form");
+    loginForm.style.display = loginForm.style.display === "none" ? "block" : "none";
+    signupForm.style.display = signupForm.style.display === "none" ? "block" : "none";
   }
+
+  async function handleSignup(event) {
+  event.preventDefault();
+  const username = document.getElementById("signup-username").value;
+  const password = document.getElementById("signup-password").value;
+
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by your browser");
+    return;
+  }
+
+  // Get the user's current location
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+
+    // Send location data along with the signup request
+    const response = await fetch("http://localhost:5000/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password, latitude, longitude }),
+    });
+
+    const data = await response.json();
+    alert(data.message);
+  }, (error) => {
+    alert("Unable to retrieve your location. Please allow location access and try again.");
+  });
 }
 
-  </script>
-</body>
+
+  async function handleLogin(event) {
+    event.preventDefault();
+    const username = document.getElementById("login-username").value;
+    const password = document.getElementById("login-password").value;
+
+    const response = await fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert(data.message);
+      localStorage.setItem("authToken", data.token); // Store the token
+      window.location.href = "dashboard.html";
+    } else {
+      alert(data.message);
+    }
+  }
+
+
+  </script></body>
 </html>

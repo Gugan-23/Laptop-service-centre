@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find User</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        .container { width: 50%; margin: auto; }
+        .user-details { margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 10px; background: #f9f9f9; display: none; }
+        input, button { padding: 10px; margin: 5px; width: 80%; }
+        .btn { background: #007bff; color: white; border: none; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Find User</h2>
+        <input type="text" id="user-id" placeholder="Enter User ID">
+        <button class="btn" onclick="fetchUser()">Find User</button>
+
+        <div id="user-details" class="user-details">
+            <h3>User Details</h3>
+            <p><strong>Name:</strong> <span id="user-name"></span></p>
+            <p><strong>Email:</strong> <span id="user-email"></span></p>
+            <p><strong>Phone:</strong> <span id="user-phone"></span></p>
+        </div>
+    </div>
+
+    <script>
+        function fetchUser() {
+            const userId = document.getElementById("user-id").value.trim();
+            if (!userId) {
+                alert("Please enter a valid User ID.");
+                return;
+            }
+
+            fetch(`http://localhost:5000/api/users/${userId}`)
+                .then(response => response.json())
+                .then(user => {
+                    if (!user) {
+                        alert("User not found.");
+                        return;
+                    }
+                    document.getElementById("user-name").textContent = user.name;
+                    document.getElementById("user-email").textContent = user.email;
+                    document.getElementById("user-phone").textContent = user.phone;
+                    document.getElementById("user-details").style.display = "block";
+                })
+                .catch(error => console.error("Error fetching user:", error));
+        }
+    </script>
+
+</body>
+</html>

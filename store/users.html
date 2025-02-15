@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fa;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-grow: 1;
+            margin-left: 250px;
+            padding: 40px;
+            width: 100%;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #2f3b52;
+            padding: 20px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            height: 100%;
+            top: 0;
+            left: 0;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 40px;
+            font-size: 24px;
+        }
+
+        .sidebar a {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            color: #fff;
+        }
+
+        /* Contact Us Form */
+        .contact-form {
+            flex-grow: 1;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .contact-form h1 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 18px;
+        }
+
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button[type="submit"] {
+            padding: 12px 25px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin-left: 200px;
+                padding: 20px;
+            }
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .contact-form {
+                padding: 20px;
+            }
+
+            .contact-form h1 {
+                font-size: 28px;
+            }
+        }
+        /* Store List Section */
+#store-list {
+    margin-top: 20px;
+}
+
+#store-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#store-list li {
+    margin-bottom: 15px;
+}
+
+.store-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    font-size: 18px;
+    text-align: left;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    text-decoration: none;
+}
+
+.store-button:hover {
+    background-color: #0056b3;
+}
+
+        </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Dashboard</h2>
+        <a href="profile.html" class="btn primary">Profile</a>
+        <a href="request.html" class="btn secondary">Requests</a>
+        <a href="about.html" class="btn primary">About Us</a>
+        <a href="contact.html" class="btn secondary">Contact</a>
+        <a href="users.html" class="btn primary">Users</a>
+      </div>
+    <div class="container">
+        <h1>Store List</h1>
+
+        <!-- Section for displaying store data -->
+        <div id="store-container">
+            <h2>Available Stores</h2>
+            <div id="store-list">
+                <p>Loading store data...</p>
+            </div>
+        </div>
+
+        <!-- Section for displaying store details -->
+       
+    </div>
+
+    <script>
+        // Fetch store data and display it
+        async function fetchStores() {
+            try {
+                const response = await fetch('http://localhost:3000/api/stores');  // API endpoint for stores
+
+                if (response.ok) {
+                    const stores = await response.json();
+                    const storeList = document.getElementById('store-list');
+
+                    // Check if stores are available
+                    if (stores.length > 0) {
+                        storeList.innerHTML = ` 
+                            <ul>
+                                ${stores.map(store => `
+                                    <li>
+                                        <button class="store-button" onclick="window.location.href='details.html?storeId=${store._id}'">
+    ${store.storeName} - ${store.contactNumber}
+</button>
+
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        `;
+                    } else {
+                        storeList.innerHTML = `<p>No stores available.</p>`;
+                    }
+                } else {
+                    document.getElementById('store-list').innerHTML = `<p>Failed to fetch stores.</p>`;
+                }
+            } catch (error) {
+                console.error('Error fetching stores:', error);
+                document.getElementById('store-list').innerHTML = `<p>An error occurred while fetching store data.</p>`;
+            }
+        }
+
+        // Function to show store details when a store is clicked
+        async function showStoreDetails(storeId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/stores/${storeId}`);  // Fetch specific store details
+
+                if (response.ok) {
+                    const store = await response.json();
+                    document.getElementById('store-name').textContent = store.storeName;
+                    document.getElementById('store-email').textContent = store.email;
+                    document.getElementById('store-contact').textContent = store.contactNumber;
+                    document.getElementById('store-latitude').textContent = store.location.latitude;
+                    document.getElementById('store-longitude').textContent = store.location.longitude;
+
+                    // Show the store details section
+                    document.getElementById('store-details').style.display = 'block';
+                } else {
+                    alert('Failed to fetch store details.');
+                }
+            } catch (error) {
+                console.error('Error fetching store details:', error);
+                alert('An error occurred while fetching store details.');
+            }
+        }
+
+        // Call the function when the page loads
+        window.onload = function() {
+            fetchStores();  // Fetch and display the stores data
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const bcrypt = require("bcrypt");
+const cors = require("cors"); // Added for CORS support
+
+const session = require('express-session');
+const app = express();
+const PORT = 3000;
+
+// Middleware setup
+app.use(bodyParser.json());
+app.use(cors()); // Enable CORS to allow frontend to communicate with the backend
+
+// MongoDB connection URI
+const mongoURI = "mongodb+srv://vgugan16:gugan2004@cluster0.qyh1fuo.mongodb.net/user_db?retryWrites=true&w=majority&appName=Cluster0";
+mongoose.connect(mongoURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+mongoose.connection.on("connected", () => {
+  console.log("Connected to MongoDB successfully!");
+});
+
+mongoose.connection.on("error", (err) => {
+  console.error("Error connecting to MongoDB:", err);
+});
+
+// Define a Store schema
+const storeSchema = new mongoose.Schema(
+  {
+    storeName: String,
+    contactNumber: String,
+    email: String,
+    password: String,
+    location: {
+      latitude: mongoose.Schema.Types.Decimal128, // Latitude as Decimal128
+      longitude: mongoose.Schema.Types.Decimal128, // Longitude as Decimal128
+    },
+  },
+  { collection: "store" } // Ensure the collection is named "store"
+);
+
+const Store = mongoose.model("Store", storeSchema);
+
+// Signup Route
+app.post("/signup", async (req, res) => {
+  const { storeName, contactNumber, email, password, location } = req.body;
+
+  // Validate location
+  if (!location || typeof location.latitude !== "number" || typeof location.longitude !== "number") {
+    return res.status(400).send("Invalid location data. Latitude and longitude are required.");
+  }
+
+  try {
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new store
+    const newStore = new Store({
+      storeName,
+      contactNumber,
+      email,
+      password: hashedPassword,
+      location,
+    });
+
+    // Save store data to the database
+    await newStore.save();
+    res.status(201).send("Store registered successfully!");
+  } catch (error) {
+    console.error("Error during signup:", error);
+    res.status(500).send("Error signing up store.");
+  }
+});
+app.get('/api/stores', async (req, res) => {
+  try {
+    const stores = await Store.find(); 
+    console.log(stores);// Fetch all stores from the database
+    res.json(stores); // Send the stores as JSON response
+  } catch (error) {
+    console.error('Error fetching stores:', error);
+    res.status(500).json({ message: 'Error fetching stores from the database.' });
+  }
+});
+app.get('/api/stores/:id', async (req, res) => {
+  const storeId = req.params.id;
+
+  try {
+    const store = await Store.findById(storeId);
+
+    if (!store) {
+      return res.status(404).json({ message: 'Store not found' });
+    }
+
+    // Convert Decimal128 to a number
+    const latitude = store.location.latitude.toString();
+    const longitude = store.location.longitude.toString();
+
+    // Send back store details with latitude and longitude as strings or numbers
+    res.json({
+      storeName: store.storeName,
+      email: store.email,
+      contactNumber: store.contactNumber,
+      location: {
+        latitude: latitude,
+        longitude: longitude
+      }
+    });
+  } catch (error) {
+    console.log('Error fetching store details:', error);
+    res.status(500).json({ message: 'Error fetching store details' });
+  }
+});
+
+
+
+// Simulated login for testing
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    httpOnly: true, 
+    secure: false, // set to true if using https
+    maxAge: 24 * 60 * 60 * 1000 // 1 day
+  }
+}));
+const sessionSchema = new mongoose.Schema({
+  sessionId: { type: String, required: true, unique: true },
+  userEmail: { type: String, required: true },
+  isLoggedIn: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+  expiresAt: { type: Date, default: () => Date.now() + 86400000 }  // 1 day expiration
+});
+
+const Session = mongoose.model('Session', sessionSchema);
+
+module.exports = Session;
+// Simulated login route
+
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
+  }
+
+  try {
+    // Find the user in the database by email
+    const user = await Store.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Compare the password (assuming bcrypt is being used)
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Create a session for the user in the Session collection
+    const session = new Session({
+      sessionId: req.sessionID,  // Store the session ID generated by the session middleware
+      userEmail: user.email,
+      isLoggedIn: true
+    });
+    console.log(session);
+    await session.save();  // Save session to the database
+
+    // Store session details in the request session
+    req.session.userEmail = user.email;
+    req.session.userId = user._id;
+    req.session.storeName = user.storeName;
+
+    console.log("Session after login:", req.session);  // Check session data
+
+    res.json({
+      message: 'Login successful',
+      redirect: '/api/profile'
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+const bookingSchema = new mongoose.Schema(
+  {
+    userEmail: String,
+    storeEmail: String,
+    status: String,
+    date: Date,
+  },
+  { collection: "bookings" } // Ensure the collection is named "bookings"
+);
+
+const Booking = mongoose.model("Booking", bookingSchema);
+
+app.get('/api/profile', async (req, res) => {
+  try {
+    // Fetch the last inserted record by sorting in descending order
+    const lastRecord = await Session.findOne().sort({ _id: -1 });
+
+    if (!lastRecord) {
+      return res.status(404).json({ message: 'No records found' });
+    }
+
+    // Print the email ID
+    const email = lastRecord.userEmail;
+    console.log('Email ID:', email);
+
+    // Find the matching record in the Store collection using the email
+    const storeRecord = await Store.findOne({ email: email });
+
+    if (!storeRecord) {
+      return res.status(404).json({ message: 'No matching store record found for this email' });
+    }
+
+    // Print the store record details in terminal
+    console.log('Store record details:', storeRecord);
+
+    // Extract latitude and longitude from storeRecord.location and convert Decimal128 to float
+    const latitude = storeRecord.location.latitude ? storeRecord.location.latitude.toString() : null;
+    const longitude = storeRecord.location.longitude ? storeRecord.location.longitude.toString() : null;
+
+    // Return the store record along with latitude and longitude
+    res.json({
+      storeName: storeRecord.storeName,
+      email: storeRecord.email,
+      contactNumber: storeRecord.contactNumber,
+      latitude: latitude,
+      longitude: longitude
+    });
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).json({ message: 'Failed to fetch records' });
+  }
+});
+
+app.get('/api/request', async (req, res) => {
+  try {
+    // Fetch the last inserted record from the Session collection
+    const lastRecord = await Session.findOne().sort({ _id: -1 });
+
+    if (!lastRecord) {
+      return res.status(404).json({ message: 'No session record found' });
+    }
+
+    const userEmail = lastRecord.userEmail;
+    console.log('Email ID from session:', userEmail);
+
+    // Check if there are booking records where the storeEmail matches the session's userEmail
+    const bookingRecords = await Booking.find({ storeEmail: userEmail });
+
+    if (bookingRecords.length === 0) {
+      console.log('No matching booking records found for this storeEmail');
+      return res.status(404).json({ message: 'No matching booking records found for this storeEmail' });
+    }
+
+    console.log('Booking records:', bookingRecords);
+
+    // Return the booking records in the response
+    res.json(bookingRecords);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).json({ message: 'Failed to fetch records' });
+  }
+});
+app.patch('/api/updateBookingStatus/:bookingId', async (req, res) => {
+  try {
+      const { bookingId } = req.params;
+      const { status } = req.body;
+
+      // Validate status
+      if (!['pending', 'approved', 'rejected'].includes(status)) {
+          return res.status(400).json({ message: 'Invalid status' });
+      }
+
+      // Update the booking in the database
+      const updatedBooking = await Booking.findByIdAndUpdate(bookingId, { status }, { new: true });
+
+      if (!updatedBooking) {
+          return res.status(404).json({ message: 'Booking not found' });
+      }
+
+      res.json({ message: 'Booking status updated', updatedBooking });
+  } catch (error) {
+      console.error('Error updating booking status:', error);
+      res.status(500).json({ message: 'Failed to update booking status' });
+  }
+});
+
+app.get('/api/user-profile', async (req, res) => {
+  const userEmail = req.session.userEmail; // Get email from session
+
+  if (!userEmail) {
+    return res.status(401).json({ message: 'User not logged in' });  // Handle if user is not logged in
+  }
+
+  try {
+    // Find the user in the database by email
+    const userProfile = await User.findOne({ email: userEmail });
+
+    if (!userProfile) {
+      return res.status(404).json({ message: 'User not found' });  // Handle if user not found
+    }
+
+    // Return the user's details (you can add more fields as needed)
+    res.json({
+      userId: userProfile._id,
+      name: userProfile.storeName,  // Assuming 'storeName' is the user's name
+      email: userProfile.email,
+      // Add other fields as needed
+    });
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ message: 'Failed to fetch user profile' });
+  }
+});
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});

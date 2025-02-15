@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Current Location</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f8ff;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    #location {
+      padding: 10px;
+      font-size: 18px;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      width: 80%;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #getLocation {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    #getLocation:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Show My Current Location</h1>
+  <div id="location">Press the button to see your location.</div>
+  <button id="getLocation">Get My Location</button>
+
+  <script>
+    document.getElementById("getLocation").addEventListener("click", function() {
+      const locationDiv = document.getElementById("location");
+
+      if (navigator.geolocation) {
+        locationDiv.textContent = "Fetching location...";
+
+        // Get current location
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            locationDiv.innerHTML = `Latitude: ${latitude.toFixed(6)}<br>Longitude: ${longitude.toFixed(6)}`;
+          },
+          (error) => {
+            locationDiv.textContent = "Unable to retrieve location. Please allow location access.";
+          }
+        );
+      } else {
+        locationDiv.textContent = "Geolocation is not supported by this browser.";
+      }
+    });
+  </script>
+</body>
+</html>

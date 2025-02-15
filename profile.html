@@ -3,89 +3,351 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile</title>
-  <link rel="stylesheet" href="dashboard.css">
-  <style>
-    .profile-container {
-      padding: 20px;
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      max-width: 600px;
-      margin: 20px auto;
-    }
+  <title>User Profile</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+  
+ 
+</head>
+<style>
+  /* General Styles */
+  body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+      background: url('https://imgs.search.brave.com/fUm2PESYEvVDeu2eN4AvNbyTiFaspZYZP1gt9UQSWfE/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9jYXJ0b29uLWlt/YWdlLWxhcHRvcC13/aXRoLWV5ZXMtY2Fy/dG9vbi1mYWNlXzkz/MjA0NC0xNjI2Lmpw/Zz9zZW10PWFpc19o/eWJyaWQ') no-repeat center center/cover;
+      height: 100vh;
+      position: relative;
+      color: #fff;
+  }
 
-    .profile-container h2 {
+  /* Overlay */
+  body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+      z-index: -1;
+      opacity: 0;
+      animation: fadeIn 1s forwards;
+  }
+
+  .container {
+      width: 80%;
+      margin: auto;
+      overflow: hidden;
+  }
+
+  /* Header Animation */
+  header {
+      background: rgba(51, 51, 51, 0.8);
+      color: #fff;
+      padding: 20px 0;
       text-align: center;
-      margin-bottom: 20px;
-    }
+      opacity: 0;
+      transform: translateY(-50px);
+      animation: fadeIn 1s forwards;
+  }
 
-    .profile-details {
-      font-size: 1rem;
-      line-height: 1.8;
-    }
+  @keyframes fadeIn {
+      to {
+          opacity: 1;
+          transform: translateY(0);
+      }
+  }
 
-    .profile-details label {
+  /* Navigation */
+  nav ul {
+      list-style: none;
+      padding: 0;
+  }
+
+  nav ul li {
+      display: inline;
+      margin-right: 15px;
+      opacity: 0;
+      animation: slideIn 0.7s ease-out forwards;
+  }
+
+  @keyframes slideIn {
+      from {
+          transform: translateY(-20px);
+          opacity: 0;
+      }
+      to {
+          transform: translateY(0);
+          opacity: 1;
+      }
+  }
+
+  nav ul li:nth-child(1) { animation-delay: 0.2s; }
+  nav ul li:nth-child(2) { animation-delay: 0.4s; }
+  nav ul li:nth-child(3) { animation-delay: 0.6s; }
+  nav ul li:nth-child(4) { animation-delay: 0.8s; }
+  nav ul li:nth-child(5) { animation-delay: 1s; }
+  nav ul li:nth-child(6) { animation-delay: 1.2s; }
+  nav ul li:nth-child(7) { animation-delay: 1.4s; }
+
+  nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease-in-out;
+  }
+
+  nav ul li a:hover {
+      color: #77aaff;
+  }
+
+  .btn {
+      background: #77aaff;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease-in-out, transform 0.2s ease;
+  }
+
+  .btn:hover {
+      background: #5599ff;
+      transform: scale(1.1);
+  }
+
+  /* Dashboard Content Animation */
+  .dashboard-content {
+      text-align: center;
+      padding: 50px 0;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 1s ease-in-out forwards 1.5s;
+  }
+
+  @keyframes slideUp {
+      to {
+          opacity: 1;
+          transform: translateY(0);
+      }
+  }
+
+  /* Logout Button Animation */
+  #logout-btn {
+      border: none;
+      transition: background 0.3s ease, transform 0.2s ease;
+  }
+
+  #logout-btn:hover {
+      background: red;
+      transform: scale(1.1);
+  }
+
+  /* Animating User Name */
+  #user-name {
+      color: #00d9ff;
       font-weight: bold;
       display: inline-block;
-      width: 150px;
-    }
-  </style>
+      transform: scale(0.5);
+      opacity: 0;
+      animation: popIn 0.7s ease-in-out forwards 2s;
+  }
+
+  @keyframes popIn {
+      to {
+          transform: scale(1);
+          opacity: 1;
+      }
+  }
+
+</style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>Dashboard</h2>
-    <a href="home.html">Home</a>
-    <a href="profile.html" class="active">Profile</a>
-    <a href="#" onclick="logout()">Logout</a>
+
+<header>
+  <div class="container">
+      <nav>
+          <ul>
+              <li><a href="dashboard.html">Home</a></li>
+              <li><a href="services.html">Services</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact</a></li>
+              <li><a href="location.html">Location</a></li>
+              <li><a href="profile.html">Profile</a></li>
+              <li><a href="Request.html">Request</a></li>
+              <li><button id="logout-btn" class="btn">Logout</button></li>
+          </ul>
+      </nav>
+  </div>
+</header>
+  <div class="container">
+    <h1>User Profile</h1>
+    <img id="profileImage" src="placeholder.jpg" alt="Profile Image">
+    <button id="editButton">Edit Profile Image</button>
+    <div id="profileData">Loading...</div>
+    <div id="map"></div>
   </div>
 
-  <div class="main-content">
-    <div class="profile-container">
-      <h2>User Profile</h2>
-      <div class="profile-details" id="profile-details">
-        <!-- User details will be displayed here dynamically -->
+  <div id="cropModal">
+    <div id="cropContainer">
+      <h3>Crop and Edit Your Image</h3>
+      <img id="cropImage" src="">
+      <div class="filter-buttons">
+        <button onclick="applyFilter('grayscale(100%)')">Black and White</button>
+        <button onclick="applyFilter('sepia(60%)')">Sunset</button>
+        <button onclick="applyFilter('none')">Remove Filter</button>
       </div>
+      <button id="saveImageButton">Save Image</button>
     </div>
   </div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
   <script>
-    async function fetchUserDetails() {
-      // Replace with your backend API endpoint
-      const response = await fetch("http://localhost:5000/profile", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + localStorage.getItem("token") // Send token if required
-        }
-      });
+    let cropper;
+    let map;
 
-      if (response.ok) {
-        const user = await response.json();
-        displayUserDetails(user);
-      } else {
-        alert("Failed to fetch user details. Please log in again.");
-        window.location.href = "index.html"; // Redirect to login if unauthorized
+    async function fetchProfile() {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        alert("No token found. Redirecting to login...");
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5000/profile", {
+          method: "GET",
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById("profileData").innerHTML = `
+            <p>Username: ${data.user.username}</p>
+            <p>Email: ${data.user.email}</p>
+            <p>Latitude: ${data.user.latitude}</p>
+            <p>Longitude: ${data.user.longitude}</p>
+          `;
+
+          if (data.user.profileImage) {
+            document.getElementById("profileImage").src = data.user.profileImage;
+          }
+
+          const lat = parseFloat(data.user.latitude);
+          const lng = parseFloat(data.user.longitude);
+          if (!isNaN(lat) && !isNaN(lng)) {
+            map = L.map('map').setView([lat, lng], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            L.marker([lat, lng]).addTo(map)
+              .bindPopup("User Location")
+              .openPopup();
+          } else {
+            document.getElementById("map").innerHTML = "Invalid coordinates.";
+          }
+        } else {
+          alert("Failed to fetch profile");
+          window.location.href = "login.html";
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        alert("An error occurred. Please try again.");
+        window.location.href = "login.html";
       }
     }
 
-    function displayUserDetails(user) {
-      const profileDetails = document.getElementById("profile-details");
-      profileDetails.innerHTML = `
-        <p><label>Username:</label> ${user.username}</p>
-        <p><label>Email:</label> ${user.email}</p>
-        <p><label>Full Name:</label> ${user.fullName}</p>
-        <p><label>Joined On:</label> ${new Date(user.joinedOn).toLocaleDateString()}</p>
-      `;
+    document.getElementById("editButton").addEventListener("click", function() {
+      disableMapInteraction(); // Disable map interaction when opening the modal
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.onchange = function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            document.getElementById("cropImage").src = e.target.result;
+            document.getElementById("cropModal").style.display = "flex";
+
+            if (cropper) {
+              cropper.destroy();
+            }
+            cropper = new Cropper(document.getElementById("cropImage"), {
+              aspectRatio: 1,
+              viewMode: 2,
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
+    });
+
+    function applyFilter(filter) {
+      document.getElementById("cropImage").style.filter = filter;
     }
 
-    function logout() {
-      localStorage.removeItem("token"); // Remove token
-      window.location.href = "index.html"; // Redirect to login
+    document.getElementById("saveImageButton").addEventListener("click", async function() {
+      enableMapInteraction(); // Re-enable map interaction when closing the modal
+      const croppedImage = cropper.getCroppedCanvas().toDataURL("image/jpeg");
+      document.getElementById("profileImage").src = croppedImage;
+      document.getElementById("cropModal").style.display = "none";
+
+      const token = localStorage.getItem("authToken");
+
+      // Upload the image to ImgBB
+      const formData = new FormData();
+      formData.append("image", croppedImage.split(",")[1]); // Remove "data:image/jpeg;base64,"
+
+      try {
+        const uploadResponse = await fetch("https://api.imgbb.com/1/upload?key=2a38576f792445722ef89345dfc34d06", {
+          method: "POST",
+          body: formData
+        });
+
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          await fetch("http://localhost:5000/update-profile-image", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ profileImage: uploadData.data.url })
+          });
+        } else {
+          alert("Image upload failed.");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        alert("Error occurred while uploading image.");
+      }
+    });
+
+    function disableMapInteraction() {
+      if (map) {
+        map.dragging.disable();
+        map.touchZoom.disable();
+        map.doubleClickZoom.disable();
+        map.scrollWheelZoom.disable();
+      }
     }
 
-    // Fetch user details on page load
-    fetchUserDetails();
+    function enableMapInteraction() {
+      if (map) {
+        map.dragging.enable();
+        map.touchZoom.enable();
+        map.doubleClickZoom.enable();
+        map.scrollWheelZoom.enable();
+      }
+    }
+
+    fetchProfile();
   </script>
 </body>
 </html>

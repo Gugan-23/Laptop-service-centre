@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Laptop Service Center</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        h2 {
+            margin-top: 20px;
+        }
+        .service-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .service-item {
+            background: #f4f4f4;
+            padding: 15px;
+            width: 30%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            position: relative;
+        }
+        .service-item button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .service-item button:hover {
+            background: #c82333;
+        }
+        .add-service-form {
+            margin-top: 30px;
+        }
+        .add-service-form input {
+            padding: 10px;
+            margin: 5px;
+            width: 80%;
+        }
+        .btn {
+            padding: 10px 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Our Services</h2>
+        <p>We offer a wide range of laptop repair and maintenance services.</p>
+        <button ahref="auth.html">User</button>
+
+        <div id="service-list" class="service-list">
+            <!-- Services will be dynamically added here -->
+        </div>
+
+        <h3>Add a New Service</h3>
+        <form class="add-service-form">
+            <input type="text" id="service-name" placeholder="Service Name" required>
+            <input type="text" id="service-description" placeholder="Service Description" required>
+            <input type="text" id="store-name" placeholder="Store Name" required>
+            <input type="text" id="store-address" placeholder="Store Address" required>
+            <input type="number" id="store-latitude" placeholder="Latitude" required>
+            <input type="number" id="store-longitude" placeholder="Longitude" required>
+            <button type="button" class="btn" onclick="addService()">Add Service</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchServices();
+        });
+
+        function fetchServices() {
+            fetch('http://localhost:5000/api/services')
+                .then(response => response.json())
+                .then(data => {
+                    const serviceList = document.getElementById('service-list');
+                    serviceList.innerHTML = ''; // Clear existing services
+
+                    data.forEach(service => {
+                        const serviceItem = document.createElement('div');
+                        serviceItem.classList.add('service-item');
+                        serviceItem.innerHTML = `
+                            <h3>${service.name}</h3>
+                            <p>${service.description}</p>
+                            <p><strong>Store Name:</strong> ${service.store.storeName}</p>
+                            <p><strong>Store Address:</strong> ${service.store.address}</p>
+                            <p><strong>Location:</strong> Latitude ${service.store.latitude}, Longitude ${service.store.longitude}</p>
+                            <button onclick="deleteService('${service._id}')">Delete</button>
+                        `;
+                        serviceList.appendChild(serviceItem);
+                    });
+                })
+                .catch(error => console.error('Error fetching services:', error));
+        }
+
+        function addService() {
+            const name = document.getElementById('service-name').value.trim();
+            const description = document.getElementById('service-description').value.trim();
+            const storeName = document.getElementById('store-name').value.trim();
+            const storeAddress = document.getElementById('store-address').value.trim();
+            const latitude = parseFloat(document.getElementById('store-latitude').value.trim());
+            const longitude = parseFloat(document.getElementById('store-longitude').value.trim());
+
+            if (!name || !description || !storeName || !storeAddress || isNaN(latitude) || isNaN(longitude)) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            fetch('http://localhost:5000/api/services', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name,
+                    description,
+                    store: {
+                        storeName,
+                        address: storeAddress,
+                        latitude,
+                        longitude
+                    }
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById('service-name').value = '';
+                document.getElementById('service-description').value = '';
+                document.getElementById('store-name').value = '';
+                document.getElementById('store-address').value = '';
+                document.getElementById('store-latitude').value = '';
+                document.getElementById('store-longitude').value = '';
+                fetchServices(); // Refresh the service list
+            })
+            .catch(error => console.error('Error adding service:', error));
+        }
+
+        function deleteService(serviceId) {
+            if (confirm('Are you sure you want to delete this service?')) {
+                fetch(`http://localhost:5000/api/services/${serviceId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    fetchServices(); // Refresh the service list
+                })
+                .catch(error => console.error('Error deleting service:', error));
+            }
+        }
+    </script>
+
+</body>
+</html>

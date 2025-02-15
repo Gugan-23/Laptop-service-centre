@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Records</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fa;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-grow: 1;
+            margin-left: 250px;
+            padding: 40px;
+            width: 100%;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #2f3b52;
+            padding: 20px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            height: 100%;
+            top: 0;
+            left: 0;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 40px;
+            font-size: 24px;
+        }
+
+        .sidebar a {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            color: #fff;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .status-btn {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin-right: 5px;
+        }
+        .status-pending {
+            background-color: #f0ad4e;
+            color: white;
+        }
+        .status-approved {
+            background-color: #5bc0de;
+            color: white;
+        }
+        .status-rejected {
+            background-color: #d9534f;
+            color: white;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            flex-grow: 1;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin-left: 200px;
+                padding: 20px;
+            }
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .profile-section {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            #profile-container {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>Dashboard</h2>
+    <a href="profile.html" class="btn primary">Profile</a>
+    <a href="booking.html" class="btn secondary">Requests</a>
+    <a href="about.html" class="btn primary">About Us</a>
+    <a href="contact.html" class="btn secondary">Contact</a>
+    <a href="users.html" class="btn primary">Users</a>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="profile-section">
+        <h1>Booking Records</h1>
+        <table id="bookingTable">
+            <thead>
+                <tr>
+                    <th>User Email</th>
+                    <th>Store Email</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Booking records will be displayed here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Function to fetch and display booking records
+    async function fetchBookingRecords() {
+        try {
+            const response = await fetch('http://localhost:3000/api/request');
+            if (response.ok) {
+                const bookingRecords = await response.json();
+                
+                const tableBody = document.getElementById('bookingTable').getElementsByTagName('tbody')[0];
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                bookingRecords.forEach(record => {
+                    const row = tableBody.insertRow();
+
+                    // Insert cells into the row
+                    row.insertCell(0).textContent = record.userEmail;
+                    row.insertCell(1).textContent = record.storeEmail;
+                    
+                    // Create buttons for the status
+                    const statusCell = row.insertCell(2);
+                    const statusButton = document.createElement('button');
+                    statusButton.classList.add('status-btn');
+                    
+                    // Assign button class based on status
+                    switch (record.status) {
+                        case 'pending':
+                            statusButton.classList.add('status-pending');
+                            statusButton.textContent = 'Pending';
+                            break;
+                        case 'approved':
+                            statusButton.classList.add('status-approved');
+                            statusButton.textContent = 'Approved';
+                            break;
+                        case 'rejected':
+                            statusButton.classList.add('status-rejected');
+                            statusButton.textContent = 'Rejected';
+                            break;
+                        default:
+                            statusButton.classList.add('status-pending');
+                            statusButton.textContent = 'Pending';
+                    }
+
+                    // Append status button
+                    statusCell.appendChild(statusButton);
+
+                    // Add Accept and Reject buttons if status is pending
+                    if (record.status === 'pending') {
+                        const acceptButton = document.createElement('button');
+                        acceptButton.textContent = 'Accept';
+                        acceptButton.classList.add('status-btn', 'status-approved');
+                        acceptButton.onclick = () => updateStatus(record._id, 'approved');
+
+                        const rejectButton = document.createElement('button');
+                        rejectButton.textContent = 'Reject';
+                        rejectButton.classList.add('status-btn', 'status-rejected');
+                        rejectButton.onclick = () => updateStatus(record._id, 'rejected');
+
+                        // Append the buttons
+                        statusCell.appendChild(acceptButton);
+                        statusCell.appendChild(rejectButton);
+                    }
+
+                    // Insert date into the row
+                    row.insertCell(3).textContent = new Date(record.date).toLocaleString(); // Format date
+                });
+            } else {
+                console.error('Error fetching booking records');
+                alert('Failed to fetch booking records');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while fetching the booking records.');
+        }
+    }
+
+    // Function to update the booking status (Accept/Reject)
+    async function updateStatus(bookingId, status) {
+        try {
+            const response = await fetch(`http://localhost:3000/api/updateBookingStatus/${bookingId}`, {
+                method: 'PATCH',  // or 'PUT' based on your backend logic
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status })
+            });
+
+            if (response.ok) {
+                alert(`Booking status updated to ${status}`);
+                fetchBookingRecords(); // Refresh the table
+            } else {
+                alert('Failed to update booking status');
+            }
+        } catch (error) {
+            console.error('Error updating status:', error);
+            alert('An error occurred while updating the status');
+        }
+    }
+
+    // Call the function when the page loads
+    window.onload = fetchBookingRecords;
+</script>
+
+</body>
+</html>

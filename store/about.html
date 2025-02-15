@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f7fa;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: #2f3b52;
+      padding: 20px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: fixed;
+      height: 100%;
+      top: 0;
+      left: 0;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 40px;
+      font-size: 24px;
+    }
+
+    .sidebar a {
+      color: #ddd;
+      text-decoration: none;
+      font-size: 18px;
+      margin: 10px 0;
+      transition: color 0.3s ease;
+    }
+
+    .sidebar a:hover {
+      color: #fff;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      margin-left: 250px;
+      padding: 40px;
+      width: 100%;
+      transition: margin-left 0.3s ease-in-out;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      font-size: 36px;
+      color: #333;
+      margin-bottom: 10px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    .greeting {
+      font-size: 18px;
+      color: #555;
+      margin-bottom: 20px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    /* About Us Section */
+    #about-us-section {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      margin-left: 280px; /* Added left margin to avoid overlap with sidebar */
+    }
+
+    .about-text h2 {
+      font-size: 24px;
+      color: #007bff;
+      margin-top: 20px;
+    }
+
+    .about-text p {
+      font-size: 16px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .about-text ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .about-text li {
+      font-size: 16px;
+      color: #555;
+      margin: 10px 0;
+    }
+
+    .team {
+      margin-top: 40px;
+    }
+
+    .team h2 {
+      font-size: 24px;
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+
+    .team-member {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .team-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin-right: 20px;
+    }
+
+    .team-info h3 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .team-info p {
+      font-size: 16px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 200px;
+      }
+
+      .main-content {
+        margin-left: 200px;
+        padding: 20px;
+      }
+
+      #about-us-section {
+        margin-left: 220px; /* Adjusted left margin for smaller screens */
+      }
+
+      .team-member {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .team-photo {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 15px;
+      }
+
+      .team-info h3 {
+        font-size: 18px;
+      }
+
+      .team-info p {
+        font-size: 14px;
+      }
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Dashboard</h2>
+    <a href="profile.html" class="btn primary">Profile</a>
+    <a href="request.html" class="btn secondary">Requests</a>
+    <a href="about.html" class="btn primary">About Us</a>
+    <a href="contact.html" class="btn secondary">Contact</a>
+    <a href="users.html" class="btn primary">Users</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <header>
+      <h1>About Us</h1>
+      <p>Learn more about our mission, values, and team</p>
+    </header>
+
+    <section id="about-us-section">
+      <!-- Mission and Values -->
+      <div class="about-text">
+        <h2>Our Mission</h2>
+        <p>
+          At [Your Store Name], our mission is to provide high-quality products that enhance the lives of our customers. We are committed to delivering exceptional service, ensuring satisfaction, and fostering long-term relationships with our clients.
+        </p>
+
+        <h2>Our Values</h2>
+        <ul>
+          <li><strong>Integrity:</strong> We believe in honesty and transparency in all aspects of our business.</li>
+          <li><strong>Quality:</strong> We ensure that our products meet the highest standards.</li>
+          <li><strong>Innovation:</strong> We are always looking for new ways to improve and grow.</li>
+        </ul>
+      </div>
+
+      <!-- Team Section -->
+      <div class="team">
+        <h2>Meet Our Team</h2>
+        <div class="team-member">
+          <img src="team-member1.jpg" alt="Team Member 1" class="team-photo">
+          <div class="team-info">
+            <h3>John Doe</h3>
+            <p>CEO & Founder</p>
+            <p>John is the visionary behind our store, committed to leading us toward success with passion and dedication.</p>
+          </div>
+        </div>
+
+        <div class="team-member">
+          <img src="team-member2.jpg" alt="Team Member 2" class="team-photo">
+          <div class="team-info">
+            <h3>Jane Smith</h3>
+            <p>Marketing Director</p>
+            <p>Jane drives our brand and marketing strategies, ensuring we connect with our customers in meaningful ways.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</body>
+</html>
